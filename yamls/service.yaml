@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rick-morty-service
+spec:
+  type: ClusterIP  # סוג הסרוויס (פנימי בלבד, ה-Ingress יחשוף אותו החוצה)
+  selector:
+    app: rick-morty # חייב להתאים ל-label ב-Deployment
+  ports:
+    - protocol: TCP
+      port: 80        # הפורט של הסרוויס עצמו
+      targetPort: 8080 # הפורט שהקונטיינר שלנו מאזין בו (בפייתון)

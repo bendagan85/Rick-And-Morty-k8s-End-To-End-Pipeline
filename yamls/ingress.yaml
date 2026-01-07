@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rick-morty-ingress
+spec:
+  rules:
+  - host: rick-morty.local  # הדומיין שדרכו ניגש לאפליקציה (נגדיר אותו ב-hosts file בהמשך)
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: rick-morty-service # מפנה לסרוויס שיצרנו למעלה
+            port:
+              number: 80

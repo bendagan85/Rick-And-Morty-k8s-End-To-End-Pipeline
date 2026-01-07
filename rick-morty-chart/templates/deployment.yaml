@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rick-morty-deployment
+spec:
+  # שימוש במשתנה למספר הרפליקות
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: rick-morty
+  template:
+    metadata:
+      labels:
+        app: rick-morty
+    spec:
+      containers:
+      - name: rick-morty-container
+        # שימוש במשתנים לשם האימג' והמדיניות
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10

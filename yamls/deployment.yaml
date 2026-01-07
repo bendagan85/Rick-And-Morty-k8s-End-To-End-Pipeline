@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rick-morty-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rick-morty
+  template:
+    metadata:
+      labels:
+        app: rick-morty
+    spec:
+      containers:
+      - name: rick-morty-container
+        image: rick-morty-app:latest
+        # אנחנו משאירים את Never כי אנחנו עובדים עם אימג' מקומי.
+        # בפרודקשן אמיתי זה יהיה Always או IfNotPresent.
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+        # בדיקות בריאות (Best Practice)
+        livenessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10

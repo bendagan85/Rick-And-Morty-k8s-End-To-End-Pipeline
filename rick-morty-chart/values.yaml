@@ -1,0 +1,19 @@
+# מספר הרפליקות (הפודים)
+replicaCount: 1
+
+# הגדרות האימג'
+image:
+  repository: rick-morty-app
+  tag: "latest"
+  pullPolicy: Never  # קריטי ל-Minikube
+
+# הגדרות הסרוויס
+service:
+  type: NodePort
+  port: 80
+  targetPort: 8080
+
+# הגדרות ה-Ingress
+ingress:
+  enabled: true
+  host: rick-morty.local
