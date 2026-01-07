@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 import requests
 import csv  # <-- הוספנו: ספרייה לעבודה עם CSV
 
@@ -60,6 +60,10 @@ def save_to_csv(data):
         print(f"ERROR: Could not save CSV: {e}")
 
 # --- הגדרת הנתיבים (Routes) ---
+
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 @app.route('/healthcheck', methods=['GET'])
 def healthcheck():

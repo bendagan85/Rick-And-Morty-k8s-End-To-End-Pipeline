@@ -3,9 +3,13 @@ replicaCount: 1
 
 # הגדרות האימג'
 image:
-  repository: rick-morty-app
+  # שינוי 1: השם המלא של האימג' בדוקר האב (כולל השם משתמש שלך)
+  repository: bendagan/rick-and-morty-app
+  
   tag: "latest"
-  pullPolicy: Never  # קריטי ל-Minikube
+  
+  # שינוי 2: חובה לשנות ל-Always כדי שהוא יחפש עדכונים באינטרנט
+  pullPolicy: Always
 
 # הגדרות הסרוויס
 service:
