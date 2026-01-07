@@ -12,20 +12,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # התקנה מסודרת של Helm
+      # התקנה של Helm
       - name: Set up Helm
         uses: azure/setup-helm@v3
         with:
           version: v3.11.1
 
+      # שינוי: שימוש באקשן הרשמי והיציב של Kind
       - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.4.0
+        uses: kubernetes-sigs/setup-kind@v1
+        with:
+          cluster_name: kind # קובעים שם מפורש כדי שלא יהיו טעויות
 
-      - name: Build Docker Image locally (for testing)
+      # בניית האימג' וטעינה שלו לתוך הקלאסטר
+      - name: Build and Load Docker Image
         run: |
           docker build -t test-image:v1 .
-          kind load docker-image test-image:v1
+          kind load docker-image test-image:v1 --name kind
 
+      # התקנת האפליקציה באמצעות Helm
       - name: Install Helm Chart
         run: |
           helm upgrade --install test-app ./rick-morty-chart \
@@ -33,18 +38,19 @@ jobs:
             --set image.tag=v1 \
             --set image.pullPolicy=Never
 
-      # הגדלנו את הזמן ל-300 שניות (5 דקות)
+      # בדיקה שהפוד עולה (עם זמן המתנה נדיב של 5 דקות)
       - name: Verify Pods are Running
         run: |
           kubectl rollout status deployment/rick-morty-deployment --timeout=300s
-          echo "Test Passed! The application runs on Kubernetes."
+          echo "✅ Test Passed! The application runs on Kubernetes."
 
-      # שלב דיבוג - ירוץ רק אם הטסט נכשל
+      # דיבוג במקרה של כישלון
       - name: Debug Failure (If Failed)
         if: failure()
         run: |
-          echo "❌ Test Failed! Here is the cluster status:"
-          kubectl get pods
+          echo "❌ Test Failed! Cluster info:"
+          kubectl get nodes
+          kubectl get pods -A
           kubectl describe pods
           kubectl logs -l app=rick-morty --all-containers
 
