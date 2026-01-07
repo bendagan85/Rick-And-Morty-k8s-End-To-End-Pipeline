@@ -1,0 +1,29 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ] # ירוץ בכל פעם שתדחוף ל-main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. הורדת הקוד מהריפו
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. התחברות ל-Docker Hub (משתמש בסיסמאות שהגדרנו)
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 3. בנייה ודחיפה של האימג'
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/rick-and-morty-app:latest
